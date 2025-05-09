@@ -8,7 +8,7 @@ public class Player {
 
     public Player(char letter) {
         this.letter = letter;
-        this.scanner = new Scanner(System.in);
+        this.scanner = new Scanner(System.in); 
     }
 
     public char getLetter() {
@@ -18,7 +18,7 @@ public class Player {
     public int getMove() {
         int move;
         System.out.println("It is " + letter + "'s turn");
-        while (true) {
+        while (true) { // this could be .get(0) otherwise it outputs error per character 
             if (scanner.hasNextInt()) {
                 move = scanner.nextInt();
                 if (move >= 1 && move <= 9) return move;
