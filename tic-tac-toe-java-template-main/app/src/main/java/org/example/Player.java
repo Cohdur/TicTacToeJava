@@ -1,14 +1,29 @@
 package org.example;
 
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class Player {
     private char letter;
     private Scanner scanner;
 
+    private ArrayList<Player> players = new ArrayList<>();
+
     public Player(char letter) {
         this.letter = letter;
+        players.add(this); // add the player to the list
         this.scanner = new Scanner(System.in); 
+    }
+
+    char getPlayer(char player) {
+
+        for (Player play : players) {
+            if(play.letter == player) {
+                return play.letter; // return the letter of the first player
+            }
+            
+        }
+        return '\0'; 
     }
 
     public char getLetter() {

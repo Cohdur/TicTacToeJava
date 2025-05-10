@@ -4,22 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class ComputerPlayer //extends Player 
+public class ComputerPlayer extends Player 
 {
     private Random random = new Random();
     Player player;
-    private char letter;
+    
+    public ComputerPlayer(char letter) {
+        super(letter);
+    }
 
-    public ComputerPlayer() {
-        //this.letter = letter;
-    }
-    char setLetter(char letter) {
-        return player(letter);
-    }
     //@Override
     public int getMove(Board board) {
         char[] grid = board.getGrid();
-        char opponent = (player.getLetter() == 'X') ? 'O' : 'X';
+        char opponent = (getLetter() == 'X') ? 'O' : 'X';
 
         // 1. First move: pick a corner
         if (isBoardEmpty(grid)) {
@@ -36,8 +33,8 @@ public class ComputerPlayer //extends Player
         for (int i = 1; i <= 9; i++) {
             if (board.cellFree(i)) {
                 Board copy = new Board(grid.clone());
-                copy.makeMove(i, player.getLetter());
-                if (copy.checkWin(player.getLetter())) {
+                copy.makeMove(i, getLetter());
+                if (copy.checkWin(getLetter())) {
                     return i;
                 }
             }

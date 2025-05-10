@@ -4,39 +4,33 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class Game extends ComputerPlayer
-{ // looks like there's a option to extend CPU file here makes it easier to add CPU
+public class Game //extends ComputerPlayer
+{ 
     private Board board;
+    
     private Player playerX, playerO;
+
     private int xWins = 0, oWins = 0, ties = 0;
-    private char nextStarter = 'X'; // X starts first game
+    private char nextStarter; // X starts first game
 
 
     public Game() {
         
-        //playerX = new Player('X');
-        //playerO = new Player('O');
-         /* 
-         board = new Board();
-         */
+        playerX = new Player('X');
+        playerO = new Player('O');
+
+        nextStarter = playerX.getLetter();
+        
+        board = new Board();  
     }
-
-    void setPlayers(char playerX, char playerO) {
-        this.playerX = new Player(playerX);
-        this.playerO = new Player(playerO);
-        board = new Board(); // initialize the board here
-    }
-
-    public void start() { // this is where he want to put CPU?
-        ComputerPlayer cpu = new ComputerPlayer(); // use as access
-        char CPU_char = cpu.setLetter('O'); // set the letter for the CPU
-
-        setPlayers('X', CPU_char);
+int menuChoiceINT;
+    public void start() {
+        //ComputerPlayer cpu = new ComputerPlayer(); // use as access
         System.out.println("Welcome to Tic Tac Toe");
         boolean keepPlaying = true;
         
         String menuChoice; // for a more optimal solution
-        int menuChoiceINT;
+        //int menuChoiceINT;
         System.out.println("Please choose your opponent: ");
         System.out.println("1. Player vs Player");
         System.out.println("2. Player vs Computer");
@@ -78,6 +72,8 @@ public class Game extends ComputerPlayer
             while (keepPlaying) {
 
             board.reset();
+            //ComputerPlayer cpu = new ComputerPlayer(playerO.getPlayer(playerO)); //?
+
             System.out.println("\nStarting a new game!");
             Player first = (nextStarter == 'X') ? playerX : playerO;
             Player second = (nextStarter == 'X') ? playerO : playerX;
@@ -106,6 +102,62 @@ public class Game extends ComputerPlayer
     } // end of switch 
     }
 
+    private char playRoundCPU(Player first, Player second, Boolean cpuStart) {
+        ComputerPlayer cpu = (menuChoiceINT == 2) ? new ComputerPlayer(second.getPlayer(playerO.getLetter())) : new ComputerPlayer(first.getPlayer(playerX.getLetter())); // use as access
+        Player currentPlayer = first;
+    
+        while (true) {
+            board.displayBoard();
+            int move = currentPlayer.getMove(board);
+            if (isValidMove(move) && cpuStart == false) {
+                board.makeMove(move, currentPlayer.getLetter());
+                
+                if (board.checkWin(currentPlayer.getLetter())) {
+                    board.displayBoard();
+                    System.out.println("Player " + currentPlayer.getLetter() + " wins!");
+                    if (currentPlayer.getLetter() == 'X') xWins++;
+                    else oWins++;
+                    return currentPlayer.getLetter();
+                }
+                
+                if (board.isDraw()) {
+                    board.displayBoard();
+                    System.out.println("It's a tie!");
+                    ties++;
+                    return 'T';
+                }
+
+                cpuStart = true;
+                currentPlayer = (currentPlayer == first) ? second : first;
+            } else if(!isValidMove(move)) {
+                System.out.println("Invalid move, please enter a valid move.");
+            }
+            else if(cpuStart == true) {
+                move = cpu.getMove(board);
+                
+                board.makeMove(move, /*currentPlayer.getPlayer(second)*/ currentPlayer.getLetter());
+                
+                if (board.checkWin(currentPlayer.getLetter())) {
+                    board.displayBoard();
+                    System.out.println("Player " + currentPlayer.getLetter() + " wins!");
+                    if (currentPlayer.getLetter() == 'X') xWins++;
+                    else oWins++;
+                    return currentPlayer.getLetter();
+                }
+                
+                if (board.isDraw()) {
+                    board.displayBoard();
+                    System.out.println("It's a tie!");
+                    ties++;
+                    return 'T';
+                }
+                cpuStart = false;
+                currentPlayer = (currentPlayer == first) ? second : first;
+                
+            }
+        }
+    } // end of CPU round 
+
     private char playRound(Player first, Player second) {
         Player currentPlayer = first;
         while (true) {
@@ -132,65 +184,6 @@ public class Game extends ComputerPlayer
                 currentPlayer = (currentPlayer == first) ? second : first;
             } else {
                 System.out.println("Invalid move, please enter a valid move.");
-            }
-        }
-    }
-
-    private char playRoundCPU(Player first, Player second, Boolean cpuStart) {
-        Player currentPlayer = first;
-
-
- ComputerPlayer cpu = new ComputerPlayer(); // use as access
- //cpu.setLetter('O'); // set the letter for the CPU
-
-
-        while (true) {
-            board.displayBoard();
-            int move = currentPlayer.getMove(board);
-            if (isValidMove(move) && cpuStart == false) {
-                board.makeMove(move, currentPlayer.getLetter());
-
-                if (board.checkWin(currentPlayer.getLetter())) {
-                    board.displayBoard();
-                    System.out.println("Player " + currentPlayer.getLetter() + " wins!");
-                    if (currentPlayer.getLetter() == 'X') xWins++;
-                    else oWins++;
-                    return currentPlayer.getLetter();
-                }
-
-                if (board.isDraw()) {
-                    board.displayBoard();
-                    System.out.println("It's a tie!");
-                    ties++;
-                    return 'T';
-                }
-                cpuStart = true;
-                currentPlayer = (currentPlayer == first) ? second : first;
-            } else if(!isValidMove(move)) {
-                System.out.println("Invalid move, please enter a valid move.");
-            }
-            else if(cpuStart == true) {
-                move = cpu.getMove(board);
-                //
-                    board.makeMove(move, currentPlayer.getLetter());
-
-                if (board.checkWin(currentPlayer.getLetter())) {
-                    board.displayBoard();
-                    System.out.println("Player " + currentPlayer.getLetter() + " wins!");
-                    if (currentPlayer.getLetter() == 'X') xWins++;
-                    else oWins++;
-                    return currentPlayer.getLetter();
-                }
-
-                if (board.isDraw()) {
-                    board.displayBoard();
-                    System.out.println("It's a tie!");
-                    ties++;
-                    return 'T';
-                }
-                cpuStart = false;
-                currentPlayer = (currentPlayer == first) ? second : first;
-                
             }
         }
     }
